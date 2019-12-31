@@ -1,9 +1,7 @@
-// create city array functionality, input will add the name of the city to the array
 // create button to clear the city array
-// clicking on a city will use then make a call against the weather api for data regarding that city.
 // add cityList to localStorage
 // add button to remove from local storage
-// add functionality to pull current location weather?
+// add functionality to pull current location weather if no current city selected?
 
 
 var cityList = [];
@@ -59,6 +57,14 @@ function getCityWeather() {
     }).then(function(data) {
         console.log("Forcast Weather", data);
         
+        
+        for(i = 0; i < data.list.length; i ++) {
+            if (data.list[i].dt_txt.search("12:00:00") != -1) {
+                var forcastDate = data.list[i];
+                
+            }
+        }
+        
     })
     
 }
@@ -73,3 +79,4 @@ $("form").on("submit", function(event) {
 })
 
 $(".cityList").on("click", ".cityButton", getCityWeather);
+
