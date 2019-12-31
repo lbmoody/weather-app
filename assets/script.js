@@ -1,6 +1,5 @@
 // create button to clear the city array
 // add cityList to localStorage
-// add button to remove from local storage
 // add functionality to pull current location weather if no current city selected?
 
 
@@ -43,7 +42,7 @@ function getCityWeather() {
     }).then(function(data) {
         $(".cityToday").append(
             `<div class="row ml-1">
-                <h3 class="mr-3">${data.name} (${(new Date(1000 * data.dt).getUTCMonth()) + 1}/${new Date(1000 * data.dt).getUTCDate()}/${new Date(1000 * data.dt).getUTCFullYear()})</h3>
+                <h3 class="mr-3">${data.name} (${(new Date(1000 * data.dt).getUTCMonth()) + 1}/${(new Date(1000 * data.dt).getUTCDate()) - 1}/${new Date(1000 * data.dt).getUTCFullYear()})</h3>
                 <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png">
             </div>`
         )
@@ -66,7 +65,7 @@ function getCityWeather() {
         
 
         for(i = 0; i < data.list.length; i ++) {
-            if (data.list[i].dt_txt.search("12:00:00") != -1) {
+            if (data.list[i].dt_txt.search("15:00:00") != -1) {
                 var forcastDate = data.list[i];
                 $(".forcast").append(
                     `<div class="card bg-primary shadow mx-4">
