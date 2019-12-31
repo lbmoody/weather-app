@@ -41,7 +41,12 @@ function getCityWeather() {
         url: weatherURL,
         method: "GET"
     }).then(function(data) {
-        $(".cityToday").append(`<h3>${data.name} (${new Date(1000 * data.dt).toLocaleString().slice(0, 10)})</h3>`)
+        $(".cityToday").append(
+            `<div class="row ml-1">
+                <h3 class="mr-3">${data.name} (${(new Date(1000 * data.dt).getUTCMonth()) + 1}/${new Date(1000 * data.dt).getUTCDate()}/${new Date(1000 * data.dt).getUTCFullYear()})</h3>
+                <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png">
+            </div>`
+        )
         $(".cityToday").append(`<p>Temperature: ${data.main.temp} &degF</p>`)
         $(".cityToday").append(`<p>Humidity: ${data.main.humidity} %</p>`)
         $(".cityToday").append(`<p>Wind: ${data.wind.speed} mph</p>`)
@@ -51,23 +56,38 @@ function getCityWeather() {
         getUVI(id, cityLat, cityLong);
     })
     
+    $(".forcast").empty();
+
     $.ajax({
         url: forcastURL, 
         method: "GET"
     }).then(function(data) {
         console.log("Forcast Weather", data);
         
-        
+
         for(i = 0; i < data.list.length; i ++) {
             if (data.list[i].dt_txt.search("12:00:00") != -1) {
                 var forcastDate = data.list[i];
-                
+                $(".forcast").append(
+                    `<div class="card bg-primary shadow mx-4">
+                        <div class="card-body">
+                            <h4 class="card-title">${(new Date(1000 * forcastDate.dt).getUTCMonth()) + 1}/${new Date(1000 * forcastDate.dt).getUTCDate()}/${new Date(1000 * forcastDate.dt).getUTCFullYear()}</h4>
+                            <div class="card-text">
+                                <img src="http://openweathermap.org/img/w/${forcastDate.weather[0].icon}.png">
+                                <p class="card-text">Temp: ${forcastDate.main.temp} &degF</p>
+                                <p class="card-text">Humidity: ${forcastDate.main.humidity} %</p>
+                            </div>
+                        </div>
+                    </div>`
+                );
+                console.log(forcastDate);
             }
         }
         
     })
     
 }
+
 
 $("form").on("submit", function(event) {
     event.preventDefault();
