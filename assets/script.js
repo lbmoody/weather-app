@@ -1,9 +1,10 @@
 // create button to clear the city array
-// add cityList to localStorage
 // add functionality to pull current location weather if no current city selected?
 
 
 var cityList = [];
+var id = "5859ec0dbfd9ff0a36abca355158892e";
+
 
 function storeCities() {
     localStorage.setItem("cities", JSON.stringify(cityList));
@@ -25,47 +26,22 @@ function init() {
 
     createCityList();
 
-    if (cityList != []) {
-
+    if (cityList) {
+        var thisCity = cityList[cityList.length - 1]
+        getCurrentWeather(thisCity, id);
+        getForcast(thisCity, id);
     }
 }
 
-// function getWeather() {
-
-// }
-
-// function getForcast() {
-    
-// }
-
-function getUVI(id, cityLat, cityLong) {
-    var uvURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityLat}&lon=${cityLong}&appid=${id}`;
-
-    $.ajax({
-        url: uvURL,
-        method: "GET"
-    }).then(function (data) {
-        $(".cityToday").append(`<p>UV Index: <span class="badge badge-danger p-2">${data.value}</span></p>`);
-    })
-}
-
-function getCityWeather() {
-    var thisCity = $(this).attr("data-city");
-    var id = "5859ec0dbfd9ff0a36abca355158892e";
+function getCurrentWeather(thisCity, id) {
     var weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${thisCity}&units=imperial&appid=${id}`;
-    var forcastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${thisCity}&units=imperial&appid=${id}`;
-    
     var cityLat;
     var cityLong;
 
-    $(".cityToday").empty();
-
-    
-    
     $.ajax({
         url: weatherURL,
         method: "GET"
-    }).then(function(data) {
+    }).then(function (data) {
         $(".cityToday").append(
             `<div class="row ml-1">
                 <h3 class="mr-3">${data.name} (${(new Date(1000 * data.dt).getUTCMonth()) + 1}/${(new Date(1000 * data.dt).getUTCDate()) - 1}/${new Date(1000 * data.dt).getUTCFullYear()})</h3>
@@ -79,14 +55,17 @@ function getCityWeather() {
         cityLong = data.coord.lon;
         getUVI(id, cityLat, cityLong);
     })
-    
-    $(".forcast").empty();
+
+}
+
+function getForcast(thisCity, id) {
+    var forcastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${thisCity}&units=imperial&appid=${id}`;
 
     $.ajax({
-        url: forcastURL, 
+        url: forcastURL,
         method: "GET"
-    }).then(function(data) {
-        for(i = 0; i < data.list.length; i ++) {
+    }).then(function (data) {
+        for (i = 0; i < data.list.length; i++) {
             if (data.list[i].dt_txt.search("15:00:00") != -1) {
                 var forcastDate = data.list[i];
                 $(".forcast").append(
@@ -103,8 +82,29 @@ function getCityWeather() {
                 );
             }
         }
-        
+
     })
+}
+
+function getUVI(id, cityLat, cityLong) {
+    var uvURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityLat}&lon=${cityLong}&appid=${id}`;
+
+    $.ajax({
+        url: uvURL,
+        method: "GET"
+    }).then(function (data) {
+        $(".cityToday").append(`<p>UV Index: <span class="badge badge-danger p-2">${data.value}</span></p>`);
+    })
+}
+
+function displayCityWeather() {
+    var thisCity = $(this).attr("data-city");
+
+    $(".cityToday").empty();
+    getCurrentWeather(thisCity, id);
+
+    $(".forcast").empty();
+    getForcast(thisCity, id);
     
 }
 
@@ -120,7 +120,7 @@ $("form").on("submit", function(event) {
     $("#citySearchInput").val("");
 })
 
-$(".cityList").on("click", ".cityButton", getCityWeather);
+$(".cityList").on("click", ".cityButton", displayCityWeather);
 
 
 console.log(cityList[cityList.length - 1]);
