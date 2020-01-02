@@ -5,6 +5,9 @@
 
 var cityList = [];
 
+function storeCities() {
+    localStorage.setItem("cities", JSON.stringify(cityList));
+}
 
 function createCityList(){
     $(".cityList").empty();
@@ -12,6 +15,28 @@ function createCityList(){
         $(".cityList").prepend($(`<button class="list-group-item list-group-item-action cityButton" data-city="${city}">${city}</button>`));
     })
 }
+
+function init() {
+    var storedCities = JSON.parse(localStorage.getItem("cities"));
+
+    if (storedCities !== null) {
+        cityList = storedCities;
+    }
+
+    createCityList();
+
+    if (cityList != []) {
+
+    }
+}
+
+// function getWeather() {
+
+// }
+
+// function getForcast() {
+    
+// }
 
 function getUVI(id, cityLat, cityLong) {
     var uvURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityLat}&lon=${cityLong}&appid=${id}`;
@@ -21,7 +46,6 @@ function getUVI(id, cityLat, cityLong) {
         method: "GET"
     }).then(function (data) {
         $(".cityToday").append(`<p>UV Index: <span class="badge badge-danger p-2">${data.value}</span></p>`);
-        console.log("UV Data", data);
     })
 }
 
@@ -35,6 +59,8 @@ function getCityWeather() {
     var cityLong;
 
     $(".cityToday").empty();
+
+    
     
     $.ajax({
         url: weatherURL,
@@ -49,7 +75,6 @@ function getCityWeather() {
         $(".cityToday").append(`<p>Temperature: ${data.main.temp} &degF</p>`)
         $(".cityToday").append(`<p>Humidity: ${data.main.humidity} %</p>`)
         $(".cityToday").append(`<p>Wind: ${data.wind.speed} mph</p>`)
-        console.log("Current Weather:", data);
         cityLat = data.coord.lat;
         cityLong = data.coord.lon;
         getUVI(id, cityLat, cityLong);
@@ -61,14 +86,11 @@ function getCityWeather() {
         url: forcastURL, 
         method: "GET"
     }).then(function(data) {
-        console.log("Forcast Weather", data);
-        
-
         for(i = 0; i < data.list.length; i ++) {
             if (data.list[i].dt_txt.search("15:00:00") != -1) {
                 var forcastDate = data.list[i];
                 $(".forcast").append(
-                    `<div class="card bg-primary shadow mx-4">
+                    `<div class="card bg-primary shadow m-4">
                         <div class="card-body">
                             <h4 class="card-title">${(new Date(1000 * forcastDate.dt).getUTCMonth()) + 1}/${new Date(1000 * forcastDate.dt).getUTCDate()}/${new Date(1000 * forcastDate.dt).getUTCFullYear()}</h4>
                             <div class="card-text">
@@ -79,7 +101,6 @@ function getCityWeather() {
                         </div>
                     </div>`
                 );
-                console.log(forcastDate);
             }
         }
         
@@ -87,6 +108,7 @@ function getCityWeather() {
     
 }
 
+init();
 
 $("form").on("submit", function(event) {
     event.preventDefault();
@@ -94,8 +116,11 @@ $("form").on("submit", function(event) {
     var newCity = $("#citySearchInput").val().trim();
     cityList.push(newCity);
     createCityList();
+    storeCities();
     $("#citySearchInput").val("");
 })
 
 $(".cityList").on("click", ".cityButton", getCityWeather);
 
+
+console.log(cityList[cityList.length - 1]);
