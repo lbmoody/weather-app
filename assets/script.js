@@ -30,11 +30,11 @@ function init() {
     if (cityList) {
         var thisCity = cityList[cityList.length - 1]
         getCurrentWeather(thisCity, id);
-        getForcast(thisCity, id);
+        getForecast(thisCity, id);
     }
 }
 
-// gets current forcast for selected city and calls uv index function
+// gets current forecast for selected city and calls uv index function
 function getCurrentWeather(thisCity, id) {
     var weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${thisCity}&units=imperial&appid=${id}`;
     var cityLat;
@@ -62,23 +62,23 @@ function getCurrentWeather(thisCity, id) {
 
 // gets 5 day forecast for selected city
 function getForecast(thisCity, id) {
-    var forcastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${thisCity}&units=imperial&appid=${id}`;
+    var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${thisCity}&units=imperial&appid=${id}`;
 
     $.ajax({
-        url: forcastURL,
+        url: forecastURL,
         method: "GET"
     }).then(function (data) {
         for (i = 0; i < data.list.length; i++) {
             if (data.list[i].dt_txt.search("15:00:00") != -1) {
-                var forcastDate = data.list[i];
-                $(".forcast").append(
+                var forecastDate = data.list[i];
+                $(".forecast").append(
                     `<div class="card bg-primary shadow m-4">
                         <div class="card-body">
-                            <h4 class="card-title">${(new Date(1000 * forcastDate.dt).getUTCMonth()) + 1}/${new Date(1000 * forcastDate.dt).getUTCDate()}/${new Date(1000 * forcastDate.dt).getUTCFullYear()}</h4>
+                            <h4 class="card-title">${(new Date(1000 * forecastDate.dt).getUTCMonth()) + 1}/${new Date(1000 * forecastDate.dt).getUTCDate()}/${new Date(1000 * forecastDate.dt).getUTCFullYear()}</h4>
                             <div class="card-text">
-                                <img src="http://openweathermap.org/img/w/${forcastDate.weather[0].icon}.png">
-                                <p class="card-text">Temp: ${forcastDate.main.temp} &degF</p>
-                                <p class="card-text">Humidity: ${forcastDate.main.humidity} %</p>
+                                <img src="http://openweathermap.org/img/w/${forecastDate.weather[0].icon}.png">
+                                <p class="card-text">Temp: ${forecastDate.main.temp} &degF</p>
+                                <p class="card-text">Humidity: ${forecastDate.main.humidity} %</p>
                             </div>
                         </div>
                     </div>`
@@ -108,7 +108,7 @@ function displayCityWeather() {
     $(".cityToday").empty();
     getCurrentWeather(thisCity, id);
 
-    $(".forcast").empty();
+    $(".forecast").empty();
     getForecast(thisCity, id);
     
 }
