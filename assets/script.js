@@ -1,15 +1,15 @@
 // create button to clear the city array
 // add functionality to pull current location weather if no current city selected?
 
-
 var cityList = [];
 var id = "5859ec0dbfd9ff0a36abca355158892e";
 
-
+// stores cityList in localStorage
 function storeCities() {
     localStorage.setItem("cities", JSON.stringify(cityList));
 }
 
+// adds last searched city to list-group as button for user to select city
 function createCityList(){
     $(".cityList").empty();
     cityList.forEach(function(city) {
@@ -17,6 +17,7 @@ function createCityList(){
     })
 }
 
+// loads cityList from local storage and calls api to get data for last searched city if it exists
 function init() {
     var storedCities = JSON.parse(localStorage.getItem("cities"));
 
@@ -33,6 +34,7 @@ function init() {
     }
 }
 
+// gets current forcast for selected city and calls uv index function
 function getCurrentWeather(thisCity, id) {
     var weatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${thisCity}&units=imperial&appid=${id}`;
     var cityLat;
@@ -58,7 +60,8 @@ function getCurrentWeather(thisCity, id) {
 
 }
 
-function getForcast(thisCity, id) {
+// gets 5 day forecast for selected city
+function getForecast(thisCity, id) {
     var forcastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${thisCity}&units=imperial&appid=${id}`;
 
     $.ajax({
@@ -86,6 +89,7 @@ function getForcast(thisCity, id) {
     })
 }
 
+// called within getCurrentWeather() to get uv index for selected city
 function getUVI(id, cityLat, cityLong) {
     var uvURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityLat}&lon=${cityLong}&appid=${id}`;
 
@@ -97,6 +101,7 @@ function getUVI(id, cityLat, cityLong) {
     })
 }
 
+// main function that clears divs and calls current and 5-day forecasts for city
 function displayCityWeather() {
     var thisCity = $(this).attr("data-city");
 
@@ -104,12 +109,14 @@ function displayCityWeather() {
     getCurrentWeather(thisCity, id);
 
     $(".forcast").empty();
-    getForcast(thisCity, id);
+    getForecast(thisCity, id);
     
 }
 
+// calls main on page load function
 init();
 
+// submit event that loads new data
 $("form").on("submit", function(event) {
     event.preventDefault();
     console.log("im here!")
@@ -120,7 +127,5 @@ $("form").on("submit", function(event) {
     $("#citySearchInput").val("");
 })
 
+// click event that calls displayCityWeather()
 $(".cityList").on("click", ".cityButton", displayCityWeather);
-
-
-console.log(cityList[cityList.length - 1]);

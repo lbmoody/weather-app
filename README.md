@@ -15,3 +15,8 @@ The app also saves the history of searched cities into localStorage. If you have
 
 ## screenshots
 
+ - shows list of previously searched cities and the load of the last searched city
+ - ![image](https://user-images.githubusercontent.com/24512590/71652236-395ecf80-2ce1-11ea-88d3-6dd85007ba24.png)
+
+ - shows blank app if nothing has been previously searched (item in todos)
+ - ![image](https://user-images.githubusercontent.com/24512590/71652259-6f03b880-2ce1-11ea-89d8-4dd5806f3be5.png)
